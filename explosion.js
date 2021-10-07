@@ -21,9 +21,11 @@ function Explosion(letter) {
                 this.particles.splice(z, 1);
             }
 
-            if (this.particles[z].y > windowHeight || this.particles[z].y < 0) {
+            
+            else if (this.particles[z].y > windowHeight || this.particles[z].y < 0) {
                 this.particles.splice(z, 1);
             }
+            
         }
     }
 }
