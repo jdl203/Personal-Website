@@ -10,6 +10,15 @@ function Ship() {
 
     this.move = function() {
         this.x_offset += this.dir*1;
+
+        if (this.x_offset > 480) {
+            this.x_offset = 480;
+        }
+        
+        if (this.x_offset < -480) {
+            this.x_offset = -480;
+        }
+        
     }
 }
 
