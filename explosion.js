@@ -14,8 +14,16 @@ function Explosion(letter) {
     }
 
     this.move = function() {
-        for(var x = 0; x < this.particles.length; x++) {
-            this.particles[x].move();
+        for(var z = 0; z < this.particles.length; z++) {
+            this.particles[z].move();
+
+            if (this.particles[z].x > windowWidth || this.particles[z].x < 0) {
+                this.particles.splice(z, 1);
+            }
+
+            if (this.particles[z].y > windowHeight || this.particles[z].y < 0) {
+                this.particles.splice(z, 1);
+            }
         }
     }
 }
