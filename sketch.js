@@ -9,12 +9,14 @@ var pages;
 
 var lasers = [];
 var explosions = [];
+var stars = [];
 
 function preload() {
   testFont = loadFont('fonts/Press_Start_2P/PressStart.ttf');
   shipImage = loadImage('Ship.png');
 }
 function setup() {
+  noStroke();
   createCanvas(windowWidth, windowHeight);
   ship = new Ship();
   aboutPage = new Page('About', [255, 0, 200]);
@@ -23,6 +25,11 @@ function setup() {
   contactPage = new Page('Contact', [255, 50, 0]);
   pages = [aboutPage, resumePage, projectsPage, contactPage];
   angleMode(DEGREES);
+  // Create stars
+  for (var x = 0; x < 80; x++) {
+    stars.push(new Star(Math.random() * windowHeight));
+  }
+
 }
 
 function draw() {
@@ -37,6 +44,18 @@ function draw() {
   for (var x = 0; x < numPages; x++) {
     pageOffset = x/numPages*width + width/(numPages*2);
     pages[x].show(pageOffset);
+  }
+
+  // Explosions
+  for (var x = 0; x < explosions.length; x++) {
+    explosions[x].show();
+    explosions[x].move();
+  }
+
+  // Stars
+  for (var x = 0; x < stars.length; x++) {
+    stars[x].show();
+    stars[x].move();
   }
 
   // Lasers
@@ -58,12 +77,7 @@ function draw() {
       lasers.splice(x, 1);
     }
   }
-
-  // Explosions
-  for (var x = 0; x < explosions.length; x++) {
-    explosions[x].show();
-    explosions[x].move();
-  }
+  
 }
  
 function keyPressed() {

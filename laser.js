@@ -5,7 +5,6 @@ function Laser(x, y) {
     this.height = 12;
 
     this.show = function() {
-        noStroke();
         fill(200,200,200);
         rectMode(CENTER);
         rect(this.x, this.y, this.width, this.height);
