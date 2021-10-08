@@ -5,7 +5,7 @@ function Star(y) {
 
     this.show = function() {
         fill(150);
-        circle(this.x, this.y, 3);
+        circle(this.x, this.y, 20*(.2-this.dir));
     }
 
     this.move = function() {

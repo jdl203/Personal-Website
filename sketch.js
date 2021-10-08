@@ -10,6 +10,9 @@ var pages;
 var lasers = [];
 var explosions = [];
 var stars = [];
+var warpStars = [];
+
+var game = true;
 
 function preload() {
   testFont = loadFont('fonts/Press_Start_2P/PressStart.ttf');
@@ -33,51 +36,73 @@ function setup() {
 }
 
 function draw() {
-  resizeCanvas(windowWidth, windowHeight);
-  background(0);
-  ship.show(shipImage);
-  ship.move();
 
-  textFont(testFont);
+  if (!game) {
+    resizeCanvas(windowWidth, windowHeight);
+    background(0);
 
-  numPages = pages.length;
-  for (var x = 0; x < numPages; x++) {
-    pageOffset = x/numPages*width + width/(numPages*2);
-    pages[x].show(pageOffset);
+    // Warp Stars
+    for (var x = 0; x < warpStars.length; x++) {
+      print("Huh");
+      warpStars[x].show();
+      warpStars[x].move();
+    }
+    
   }
 
-  // Explosions
-  for (var x = 0; x < explosions.length; x++) {
-    explosions[x].show();
-    explosions[x].move();
-  }
-
-  // Stars
-  for (var x = 0; x < stars.length; x++) {
-    stars[x].show();
-    stars[x].move();
-  }
-
-  // Lasers
-  for (var x = 0; x < lasers.length; x++) {
-    lasers[x].show();
-    lasers[x].move();
-    var hit = false;
-    for (var y = 0; y < numPages; y++) {
-      for (var z = 0; z < pages[y].letters.length; z ++) {
-        if (lasers[x].hits(pages[y].letters[z])) {
-          var explosion = new Explosion(pages[y].letters[z]);
-          explosions.push(explosion);
-          hit = true;
-          pages[y].letters[z].alive = false;
-        }
+  else {
+    for (var x = 0; x < pages.length; x++) {
+      if (!pages[x].alive) {
+        game = false;
+        warpSpeed(pages[x]);
       }
     }
-    if (hit) {
-      lasers.splice(x, 1);
+    resizeCanvas(windowWidth, windowHeight);
+    background(0);
+
+    ship.show(shipImage);
+    ship.move();
+
+    textFont(testFont);
+
+    numPages = pages.length;
+    for (var x = 0; x < numPages; x++) {
+      pageOffset = x/numPages*width + width/(numPages*2);
+      pages[x].show(pageOffset);
     }
-  }
-  
+
+    // Explosions
+    for (var x = 0; x < explosions.length; x++) {
+      explosions[x].show();
+      explosions[x].move();
+    }
+
+    // Stars
+    for (var x = 0; x < stars.length; x++) {
+      stars[x].show();
+      stars[x].move();
+    }
+
+    // Lasers
+    for (var x = 0; x < lasers.length; x++) {
+      lasers[x].show();
+      lasers[x].move();
+      var hit = false;
+      for (var y = 0; y < numPages; y++) {
+        for (var z = 0; z < pages[y].letters.length; z ++) {
+          if (lasers[x].hits(pages[y].letters[z])) {
+            var explosion = new Explosion(pages[y].letters[z]);
+            explosions.push(explosion);
+            hit = true;
+            pages[y].letters[z].alive = false;
+          }
+        }
+      }
+      if (hit) {
+        lasers.splice(x, 1);
+      }
+    }
+  }  
 }
  
 function keyPressed() {
@@ -98,5 +123,17 @@ function keyReleased() {
     ship.dir = 0;
   } else if (keyCode === LEFT_ARROW) {
       ship.dir = 0;
+  }
+}
+
+function warpSpeed(page) {
+  print(page.name);
+
+  for (var x = 0; x < stars.length; x++) {
+    warpStars.push(new WarpStar(stars[x]));
+  }
+
+  for (var x = 0; x < 1080; x++) {
+    warpStars.push(new WarpStar(new Star(Math.random() * windowHeight)));
   }
 }
