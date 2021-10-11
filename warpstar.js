@@ -13,21 +13,44 @@ function WarpStar(star) {
 
     this.firstX = star.x;
     this.firstY = star.y;
+
+    this.color = [255, 255, 255];
     
     this.iterations = 0;
 
     this.show = function() {
-        stroke(150);
-        strokeWeight(3);
+        stroke(this.color[0], this.color[1], this.color[2]);
+        strokeWeight(2);
         line(this.firstX, this.firstY, this.x, this.y);
         
     }
 
     this.move = function() {
-        this.x += this.xSlope*this.iterations*.1;
-        this.y += this.ySlope*this.iterations*.1;
+        
+        if (this.iterations >= 60) {
+            this.x += this.xSlope*this.iterations*this.iterations*.01;
+            this.y += this.ySlope*this.iterations*this.iterations*.01;
+        }
+
+        else if (this.iterations >= 0) {
+            this.x += this.xSlope*this.iterations*this.iterations*.0001;
+            this.y += this.ySlope*this.iterations*this.iterations*.0001;
+        }
+
+        
+
+        if (this.iterations >= 100) {
+            this.firstX += this.xSlope*(this.iterations-100)*(this.iterations-100)*.1;
+            this.firstY += this.ySlope*(this.iterations-100)*(this.iterations-100)*.1;
+        }
+
+        else if (this.iterations >= 60) {
+            this.firstX += this.xSlope*(this.iterations-60)*(this.iterations-60)*.001;
+            this.firstY += this.ySlope*(this.iterations-60)*(this.iterations-60)*.001;
+        }
+
+        
 
         this.iterations += 1;
-
     }
 }

@@ -17,6 +17,7 @@ function Particle(letter) {
     this.colorFrac = Math.random();
 
     this.show = function() {
+        strokeWeight(0);
         fill(this.getParticleColor(0), this.getParticleColor(1), this.getParticleColor(2));
         rectMode(CENTER);
         rect(this.x, this.y, 5, 5);

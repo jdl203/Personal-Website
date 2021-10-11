@@ -1,11 +1,12 @@
 function Star(y) {
     this.x = Math.random() * windowWidth;
     this.y = y;
-    this.dir = (Math.random() / 10) + .05;
+    this.dir = (Math.random() / 5) + .1;
 
     this.show = function() {
-        fill(150);
-        circle(this.x, this.y, 20*(.2-this.dir));
+        strokeWeight(0);
+        fill(255);
+        circle(this.x, this.y, 20*(.3-this.dir));
     }
 
     this.move = function() {

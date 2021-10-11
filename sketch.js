@@ -13,6 +13,7 @@ var stars = [];
 var warpStars = [];
 
 var game = true;
+var starsLeft = 1000;
 
 function preload() {
   testFont = loadFont('fonts/Press_Start_2P/PressStart.ttf');
@@ -37,15 +38,39 @@ function setup() {
 
 function draw() {
 
+  resizeCanvas(windowWidth, windowHeight);
+  background(3, 7, 30);
+
   if (!game) {
-    resizeCanvas(windowWidth, windowHeight);
-    background(0);
 
     // Warp Stars
     for (var x = 0; x < warpStars.length; x++) {
-      print("Huh");
       warpStars[x].show();
       warpStars[x].move();
+
+    }
+
+    // Explosions
+    if (warpStars[0].iterations < 60) {
+      for (var x = 0; x < explosions.length; x++) {
+        explosions[x].move();
+        explosions[x].show();
+      }
+    }
+    if (warpStars[0].iterations == 60) {
+      explosions_into_warp_stars();
+    }
+
+    // Stars after warp speed
+    if (warpStars[0].iterations == 100) {
+      for (var x = 0; x < 80; x++) {
+        stars.push(new Star(Math.random() * windowHeight));
+      }
+    }
+    for (var x = 0; x < stars.length; x ++) {
+      
+      stars[x].show();
+      stars[x].move();
     }
     
   }
@@ -53,12 +78,34 @@ function draw() {
   else {
     for (var x = 0; x < pages.length; x++) {
       if (!pages[x].alive) {
-        game = false;
-        warpSpeed(pages[x]);
+        warp_add_stars();
+
+        stroke(155);
+        strokeWeight(10 - starsLeft/100);
+
+        if (starsLeft == 40) {
+          // Pop letters
+          for (var y = 0; y < numPages; y++) {
+            for (var z = 0; z < pages[y].letters.length; z ++) {
+              if (pages[y].letters[z].alive) {
+                var explosion = new Explosion(pages[y].letters[z]);
+                explosions.push(explosion);
+                pages[y].letters[z].alive = false;
+              }
+            }
+          }
+        }
+        
+        if (starsLeft <= 0){
+          game = false;
+          print(pages[x].name);
+          stars_into_warp_stars();
+          stars = [];
+        }
+        
       }
     }
-    resizeCanvas(windowWidth, windowHeight);
-    background(0);
+    
 
     ship.show(shipImage);
     ship.move();
@@ -126,14 +173,37 @@ function keyReleased() {
   }
 }
 
-function warpSpeed(page) {
-  print(page.name);
+function warp_add_stars() {
+  if (starsLeft > 40) {
+    for (var x = 0; x < 10; x++) {
+      stars.push(new Star(Math.random() * windowHeight));
+      starsLeft -= 1;
+    }
+  }
+  else {
+    starsLeft -= 1;
+  }
+}
 
+function stars_into_warp_stars() {
   for (var x = 0; x < stars.length; x++) {
     warpStars.push(new WarpStar(stars[x]));
   }
+}
 
-  for (var x = 0; x < 1080; x++) {
-    warpStars.push(new WarpStar(new Star(Math.random() * windowHeight)));
+function explosions_into_warp_stars() {
+  for (var x = 0; x < explosions.length; x++) {
+    for (var y = 0; y < explosions[x].particles.length; y++) {
+      newStar = new Star(explosions[x].particles[y].y);
+      newStar.x = explosions[x].particles[y].x;
+      warpStars.push(new WarpStar(newStar));
+
+      // Update characteristics of new warp star
+      warpStars[warpStars.length-1].iterations = 60;
+
+      particle = explosions[x].particles[y];
+
+      warpStars[warpStars.length-1].color = [particle.getParticleColor(0), particle.getParticleColor(1), particle.getParticleColor(2)];
+    }
   }
 }
