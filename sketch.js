@@ -6,6 +6,7 @@ var projectsPage;
 var contactPage;
 
 var pages;
+var allCharsLength = 2;
 
 var lasers = [];
 var explosions = [];
@@ -14,25 +15,36 @@ var warpStars = [];
 
 var game = true;
 var starsLeft = 1000;
+var startGame = true;
+
+var controlsTint = 255;
 
 function preload() {
   testFont = loadFont('fonts/Press_Start_2P/PressStart.ttf');
   shipImage = loadImage('Ship.png');
+  controlsImage = loadImage('Controls.png');
 }
 function setup() {
   noStroke();
   createCanvas(windowWidth, windowHeight);
   ship = new Ship();
-  aboutPage = new Page('About', [255, 0, 200]);
-  resumePage = new Page('Resume', [0, 100, 200]);
-  projectsPage = new Page('Projects', [200, 200, 0]);
+  aboutPage = new Page('About', [0, 100, 200]);
+  resumePage = new Page('Resume', [255, 0, 200]);
+  projectsPage = new Page('Projects', [0, 255, 0]);
   contactPage = new Page('Contact', [255, 50, 0]);
   pages = [aboutPage, resumePage, projectsPage, contactPage];
+
+  for (var x = 0; x < pages.length; x++) {
+    allCharsLength += pages[x].name.length + 2;
+    console.log(allCharsLength);
+  }
   angleMode(DEGREES);
   // Create stars
   for (var x = 0; x < 80; x++) {
     stars.push(new Star(Math.random() * windowHeight));
   }
+
+  textFont(testFont);
 
 }
 
@@ -76,6 +88,8 @@ function draw() {
   }
 
   else {
+
+    // Pages
     for (var x = 0; x < pages.length; x++) {
       if (!pages[x].alive) {
         warp_add_stars();
@@ -106,15 +120,27 @@ function draw() {
       }
     }
     
+    if (!startGame && controlsTint > 0) {
+      controlsTint -= 5;
+    }
+    showControls();
 
     ship.show(shipImage);
     ship.move();
 
-    textFont(testFont);
-
+    // Stars
+    for (var x = 0; x < stars.length; x++) {
+      stars[x].show();
+      stars[x].move();
+    }
+    
+    // Pages
     numPages = pages.length;
+    numLetters = 2;
     for (var x = 0; x < numPages; x++) {
-      pageOffset = x/numPages*width + width/(numPages*2);
+      pageOffset = width/allCharsLength * numLetters + ((width/allCharsLength * (pages[x].name.length+numLetters)) - (width/allCharsLength * numLetters))/2;
+      numLetters += pages[x].name.length + 2;
+
       pages[x].show(pageOffset);
     }
 
@@ -122,12 +148,6 @@ function draw() {
     for (var x = 0; x < explosions.length; x++) {
       explosions[x].show();
       explosions[x].move();
-    }
-
-    // Stars
-    for (var x = 0; x < stars.length; x++) {
-      stars[x].show();
-      stars[x].move();
     }
 
     // Lasers
@@ -154,14 +174,17 @@ function draw() {
  
 function keyPressed() {
   if (key === ' ') {
+    checkStart();
     var laser = new Laser(width/2 + ship.x_offset*.001*width, height-100);
     lasers.push(laser);
   }
 
   if (keyCode === RIGHT_ARROW) {
-      ship.dir = 2;
+    checkStart();
+    ship.dir = 2;
   } else if (keyCode === LEFT_ARROW) {
-      ship.dir = -2;
+    checkStart();
+    ship.dir = -2;
   }
 }
 
@@ -205,5 +228,19 @@ function explosions_into_warp_stars() {
 
       warpStars[warpStars.length-1].color = [particle.getParticleColor(0), particle.getParticleColor(1), particle.getParticleColor(2)];
     }
+  }
+}
+
+function checkStart() {
+  if (startGame) {
+    startGame = false;
+  }
+}
+
+function showControls() {
+  if (controlsTint > 0) {
+    tint(controlsTint, controlsTint, controlsTint);
+    image(controlsImage, width/2, height/2, width/5, width/5);
+    noTint();
   }
 }
