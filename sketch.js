@@ -84,17 +84,22 @@ function draw() {
       stars[x].show();
       stars[x].move();
     }
-    
   }
 
   else {
+
+    // Stars
+    for (var x = 0; x < stars.length; x++) {
+      stars[x].show();
+      stars[x].move();
+    }
 
     // Pages
     for (var x = 0; x < pages.length; x++) {
       if (!pages[x].alive) {
         warp_add_stars();
 
-        stroke(155);
+        stroke(255);
         strokeWeight(10 - starsLeft/100);
 
         if (starsLeft == 40) {
@@ -128,12 +133,6 @@ function draw() {
     ship.show(shipImage);
     ship.move();
 
-    // Stars
-    for (var x = 0; x < stars.length; x++) {
-      stars[x].show();
-      stars[x].move();
-    }
-    
     // Pages
     numPages = pages.length;
     numLetters = 2;
@@ -143,6 +142,8 @@ function draw() {
 
       pages[x].show(pageOffset);
     }
+
+    
 
     // Explosions
     for (var x = 0; x < explosions.length; x++) {
